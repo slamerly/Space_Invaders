@@ -24,8 +24,9 @@ void Game::load()
     Assets::loadTexture(renderer, "Res\\Farback02.png", "Farback02");
     Assets::loadTexture(renderer, "Res\\Stars.png", "Stars");
     Assets::loadTexture(renderer, "Res\\Astroid.png", "Astroid");
-    Assets::loadTexture(renderer, "Res\\Ship.png", "Ship");
+    Assets::loadTexture(renderer, "Res\\Ship01-SpaceInvaders.png", "Ship");
     Assets::loadTexture(renderer, "Res\\Laser.png", "Laser");
+    Assets::loadTexture(renderer, "Res\\Alien.png", "Alien");
 
     // Single sprite
     /*
@@ -49,7 +50,7 @@ void Game::load()
 
     // Controlled ship
     Ship* ship = new Ship();
-    ship->setPosition(Vector2{ 100, 300 });
+    ship->setPosition(Vector2{ 512, 700 });
 
     // Background
     // Create the "far back" background
@@ -59,7 +60,7 @@ void Game::load()
     };
     Actor* bgFar = new Actor();
     BackgroundSpriteComponent* bgSpritesFar = new BackgroundSpriteComponent(bgFar, bgTexsFar);
-    bgSpritesFar->setScrollSpeed(-100.0f);
+    //bgSpritesFar->setScrollSpeed(-100.0f);
 
     // Create the closer background
     Actor* bgClose = new Actor();
@@ -68,7 +69,7 @@ void Game::load()
         &Assets::getTexture("Stars")
     };
     BackgroundSpriteComponent* bgSpritesClose = new BackgroundSpriteComponent(bgClose, bgTexsClose, 50);
-    bgSpritesClose->setScrollSpeed(-200.0f);
+    //bgSpritesClose->setScrollSpeed(-200.0f);
 
     const int astroidNumber = 20;
     for (int i = 0; i < astroidNumber; ++i)

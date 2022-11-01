@@ -4,13 +4,18 @@
 #include "Window.h"
 
 MoveComponent::MoveComponent(Actor* ownerP, int updateOrderP): 
-	Component(ownerP, updateOrderP), forwardSpeed(0.0f), angularSpeed(0.0f)
+	Component(ownerP, updateOrderP), forwardSpeed(0.0f), sideSpeed(0.0f), angularSpeed(0.0f)
 {
 }
 
 void MoveComponent::setForwardSpeed(float forwardSpeedP)
 {
 	forwardSpeed = forwardSpeedP;
+}
+
+void MoveComponent::setSideSpeed(float sideSpeedP)
+{
+	sideSpeed = sideSpeedP;
 }
 
 void MoveComponent::setAngularSpeed(float angularSpeedP)
@@ -36,5 +41,11 @@ void MoveComponent::update(float dt)
 		else if (newPosition.y > WINDOW_HEIGHT) { newPosition.y = 0; }
 
 		owner.setPosition(newPosition);
+	}
+	if (!Maths::nearZero(sideSpeed))
+	{
+		Vector2 newPosition = owner.getPosition() + owner.getSide() * sideSpeed * dt;
+		if(newPosition.x > 50 && newPosition.x < WINDOW_WIDTH - 50)
+			owner.setPosition(newPosition);
 	}
 }

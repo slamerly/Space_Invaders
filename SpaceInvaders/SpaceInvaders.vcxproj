@@ -20,6 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h" />
+    <ClInclude Include="Alien.h" />
+    <ClInclude Include="AlienTab.h" />
     <ClInclude Include="AnimSpriteComponent.h" />
     <ClInclude Include="Assets.h" />
     <ClInclude Include="Astroid.h" />
@@ -44,6 +46,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp" />
+    <ClCompile Include="Alien.cpp" />
+    <ClCompile Include="AlienTab.cpp" />
     <ClCompile Include="AnimSpriteComponent.cpp" />
     <ClCompile Include="Assets.cpp" />
     <ClCompile Include="Astroid.cpp" />
@@ -65,6 +69,9 @@
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Window.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -121,6 +128,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>.\External\glew-2.1.0\include;.\External\rapidjson\include;.\External\SDL2_image-2.0.5\include;.\External\SDL2_mixer-2.0.4\include;.\External\SDL2_ttf-2.0.15\include;.\External\SDL2-2.0.12\include;$(IncludePath)</IncludePath>
     <LibraryPath>.\External\glew-2.1.0\lib\Release\x64;.\External\SDL2_image-2.0.5\lib\x64;.\External\SDL2_mixer-2.0.4\lib\x64;.\External\SDL2_ttf-2.0.15\lib\x64;.\External\SDL2-2.0.12\lib\x64;$(LibraryPath)</LibraryPath>
+    <PublicIncludeDirectories>.\External\glew-2.1.0\include;.\External\rapidjson\include;.\External\SDL2_image-2.0.5\include;.\External\SDL2_mixer-2.0.4\include;.\External\SDL2_ttf-2.0.15\include;.\External\SDL2-2.0.12\include;$(PublicIncludeDirectories)</PublicIncludeDirectories>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

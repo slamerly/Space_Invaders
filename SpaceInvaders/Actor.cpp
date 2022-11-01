@@ -27,6 +27,13 @@ Actor::~Actor()
 
 Vector2 Actor::getForward() const
 {
+	//return Vector2(Maths::cos(rotation), -Maths::sin(rotation));
+	return Vector2(Maths::sin(rotation), -Maths::cos(rotation));
+}
+
+Vector2 Actor::getSide() const
+{
+	//return Vector2(-Maths::sin(rotation), Maths::cos(rotation));
 	return Vector2(Maths::cos(rotation), -Maths::sin(rotation));
 }
 
