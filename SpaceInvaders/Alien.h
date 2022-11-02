@@ -10,6 +10,7 @@ public:
     ~Alien();
 
     CircleCollisionComponent& getCollision() { return *collision; }
+    void Shoot();
 
 private:
     CircleCollisionComponent* collision;

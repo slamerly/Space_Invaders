@@ -64,8 +64,12 @@ private:
 	vector<Actor*> pendingActors;
 
 	// Game specific
+	void aliensShoot(float dt);
+
 	vector<Astroid*> astroids;
 	vector<vector<Alien*>> aliens;
+	vector<Alien*> aliensShooters;
+	float delayShot = 0.0f;
 	//Alien* alien;
 };
 

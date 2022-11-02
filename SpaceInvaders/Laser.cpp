@@ -45,7 +45,7 @@ void Laser::updateActor(float dt)
 		{
 			for (auto alien : alienVec)
 			{
-				if (alien->getState() == Actor::ActorState::Active)
+				if (alien != nullptr && alien->getState() == Actor::ActorState::Active)
 				{
 					if (Intersect(*collision, alien->getCollision()))
 					{
@@ -56,16 +56,5 @@ void Laser::updateActor(float dt)
 				}
 			}
 		}
-		/*
-		auto alien = getGame().getAlien();
-		if (alien->getState() == Actor::ActorState::Active)
-		{
-			if (Intersect(*collision, alien->getCollision()))
-			{
-				setState(ActorState::Dead);
-				alien->setState(ActorState::Dead);
-			}
-		}
-		*/
 	}
 }

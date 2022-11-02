@@ -5,6 +5,7 @@
 #include "BackgroundSpriteComponent.h"
 #include "Astroid.h"
 #include "Ship.h"
+#include <iostream>
 
 bool Game::initialize()
 {
@@ -94,10 +95,16 @@ void Game::load()
             //aliens[li][co]->setPosition({ initX, initY });
             vectorTempAlien.emplace_back(tempAlien);
             initX += 64;
+            /*if (li == 4)
+            {
+                aliensShooters.emplace_back(tempAlien);
+            }
+            */
         }
         aliens.emplace_back(vectorTempAlien);
         initY += 48;
     }
+    aliensShooters = aliens[4];
     /*
     Alien* alienTemp = new Alien();
     alienTemp->setPosition({ 192, 100 });
@@ -202,17 +209,48 @@ void Game::removeAlien(Alien* alienTarget)
             }
         }
     }
+    */
+    
     for (int i = 0; i < 5; i++)
     {
         for (int j = 0; j < 11; j++)
         {
+            if (aliensShooters[j] == alienTarget)
+            {
+                int line = i - 1;
+                for (;line >= 0; line--)
+                {
+                    if (aliens[line][j] != nullptr)
+                    {
+                        break;
+                    }
+                }
+
+                if (line == -1)
+                {
+                    /*
+                    auto iter = std::find(begin(aliensShooters), end(aliensShooters), alienTarget);
+                    if (iter != aliensShooters.end())
+                    {
+                        aliensShooters.erase(iter);
+                    }
+                    */
+                    //aliensShooters.erase(aliensShooters.begin()+j-1);
+                    aliensShooters[j] = nullptr;
+                }
+                else
+                {
+                    aliensShooters[j] = aliens[line][j];
+                }
+            }
             if (aliens[i][j] == alienTarget)
             {
-                //aliens[i][j]
+                aliens[i][j] = nullptr;
+                break;
             }
         }
     }
-    
+    /*
     for (auto alienVec : aliens)
     {
         auto iter = std::find(begin(alienVec), end(alienVec), alienTarget);
@@ -265,27 +303,14 @@ void Game::update(float dt)
     }
     isUpdatingActors = false;
 
+    //aliensShoot(dt);
+
     // Move pending actors to actors
     for (auto pendingActor : pendingActors)
     {
         actors.emplace_back(pendingActor);
     }
     pendingActors.clear();
-
-    // change alien
-    /*
-    for (auto alienVec : aliens)
-    {
-        for (auto alien : alienVec)
-        {
-            if (alien->getState() != Actor::ActorState::Active)
-            {
-                alien = nullptr;
-                break;
-            }
-        }
-    }
-    */
 
     // Delete dead actors
     vector<Actor*> deadActors;
@@ -307,4 +332,23 @@ void Game::render()
     renderer.beginDraw();
     renderer.draw();
     renderer.endDraw();
+}
+
+void Game::aliensShoot(float dt)
+{
+    if (delayShot <= 0)
+    {
+        int shooter = 0;
+        do {
+            shooter = rand() % 12;
+        } while (aliensShooters[shooter] == nullptr);
+
+        aliensShooters[shooter]->Shoot();
+
+        delayShot = static_cast<float> (rand() % 3 + 1);
+    }
+    else
+    {
+        delayShot -= dt;
+    }
 }

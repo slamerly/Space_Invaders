@@ -2,6 +2,7 @@
 #include "SpriteComponent.h"
 #include "Assets.h"
 #include "Game.h"
+#include "Laser.h"
 
 Alien::Alien() : 
 	Actor()
@@ -15,4 +16,11 @@ Alien::Alien() :
 Alien::~Alien()
 {
 	getGame().removeAlien(this);
+}
+
+void Alien::Shoot()
+{
+	Laser* laser = new Laser();
+	laser->setPosition(getPosition());
+	laser->setRotation(getRotation());
 }
