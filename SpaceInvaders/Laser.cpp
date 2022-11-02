@@ -4,10 +4,11 @@
 #include "MoveComponent.h"
 #include "Game.h"
 #include "Astroid.h"
+#include "Alien.h"
 
 Laser::Laser() :
 	Actor(),
-	deathTimer(0.75f),
+	deathTimer(0.85f),
 	collision(nullptr)
 {
 	new SpriteComponent(this, Assets::getTexture("Laser"));
@@ -26,6 +27,7 @@ void Laser::updateActor(float dt)
 	}
 	else
 	{
+		/*
 		auto astroids = getGame().getAstroids();
 		for (auto astroid : astroids)
 		{
@@ -36,5 +38,34 @@ void Laser::updateActor(float dt)
 				break;
 			}
 		}
+		*/
+		vector<vector<Alien*>> aliens; 
+		aliens = getGame().getAliens();
+		for (auto alienVec : aliens)
+		{
+			for (auto alien : alienVec)
+			{
+				if (alien->getState() == Actor::ActorState::Active)
+				{
+					if (Intersect(*collision, alien->getCollision()))
+					{
+						setState(ActorState::Dead);
+						alien->setState(ActorState::Dead);
+						break;
+					}
+				}
+			}
+		}
+		/*
+		auto alien = getGame().getAlien();
+		if (alien->getState() == Actor::ActorState::Active)
+		{
+			if (Intersect(*collision, alien->getCollision()))
+			{
+				setState(ActorState::Dead);
+				alien->setState(ActorState::Dead);
+			}
+		}
+		*/
 	}
 }

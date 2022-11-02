@@ -5,6 +5,7 @@
 #include "Actor.h"
 #include "SpriteComponent.h"
 #include "Astroid.h"
+#include "Alien.h"
 
 using std::vector;
 
@@ -45,6 +46,9 @@ public:
 	vector<Astroid*>& getAstroids();
 	void addAstroid(Astroid* astroid);
 	void removeAstroid(Astroid* astroid);
+	vector<vector<Alien*>> getAliens() { return aliens; }
+	//Alien* getAlien() { return alien; }
+	void removeAlien(Alien* alienTarget);
 
 private:
 	void processInput();
@@ -61,5 +65,7 @@ private:
 
 	// Game specific
 	vector<Astroid*> astroids;
+	vector<vector<Alien*>> aliens;
+	//Alien* alien;
 };
 

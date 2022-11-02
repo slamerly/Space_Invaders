@@ -14,8 +14,8 @@ Ship::Ship() :
 	//ic->setMaxAngularSpeed(Maths::twoPi);
 	ic->setMaxSideSpeed(300.0f);
 
-	collision = new CircleCollisionComponent(this);
-	collision->setRadius(40.0f);
+	//collision = new CircleCollisionComponent(this);
+	//collision->setRadius(40.0f);
 }
 
 void Ship::actorInput(const Uint8* keyState)
@@ -25,7 +25,7 @@ void Ship::actorInput(const Uint8* keyState)
 		laser = new Laser();
 		laser->setPosition(getPosition());
 		laser->setRotation(getRotation());
-		//laserCooldown = 0.0f;
+		//laserCooldown = 0.9f;
 	}
 }
 

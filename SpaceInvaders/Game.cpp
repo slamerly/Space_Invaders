@@ -71,11 +71,38 @@ void Game::load()
     BackgroundSpriteComponent* bgSpritesClose = new BackgroundSpriteComponent(bgClose, bgTexsClose, 50);
     //bgSpritesClose->setScrollSpeed(-200.0f);
 
+    /*
     const int astroidNumber = 20;
     for (int i = 0; i < astroidNumber; ++i)
     {
         new Astroid();
     }
+    */
+
+
+    // ALIEN TAB
+    float initY = 100;
+    for (int li = 0; li < 5; li++)
+    {
+        float initX = 192;
+        vector<Alien*> vectorTempAlien;
+        for (int co = 0; co < 11; co++)
+        {
+            Alien* tempAlien = new Alien();
+            tempAlien->setPosition({ initX, initY });
+            //aliens[li][co] = new Alien();
+            //aliens[li][co]->setPosition({ initX, initY });
+            vectorTempAlien.emplace_back(tempAlien);
+            initX += 64;
+        }
+        aliens.emplace_back(vectorTempAlien);
+        initY += 48;
+    }
+    /*
+    Alien* alienTemp = new Alien();
+    alienTemp->setPosition({ 192, 100 });
+    alien = alienTemp;
+    */
 }
 
 void Game::loop()
@@ -161,6 +188,43 @@ void Game::removeAstroid(Astroid* astroid)
     }
 }
 
+void Game::removeAlien(Alien* alienTarget)
+{
+    /*
+    for (auto alienVec : aliens)
+    {
+        for (auto alien : alienVec)
+        {
+            if (alien == alienTarget)
+            {
+                alien = nullptr;
+                break;
+            }
+        }
+    }
+    for (int i = 0; i < 5; i++)
+    {
+        for (int j = 0; j < 11; j++)
+        {
+            if (aliens[i][j] == alienTarget)
+            {
+                //aliens[i][j]
+            }
+        }
+    }
+    
+    for (auto alienVec : aliens)
+    {
+        auto iter = std::find(begin(alienVec), end(alienVec), alienTarget);
+        if (iter != alienVec.end())
+        {
+            alienVec.erase(iter);
+            break;
+        }
+    }
+    */
+}
+
 void Game::processInput()
 {
     SDL_Event event;
@@ -207,6 +271,21 @@ void Game::update(float dt)
         actors.emplace_back(pendingActor);
     }
     pendingActors.clear();
+
+    // change alien
+    /*
+    for (auto alienVec : aliens)
+    {
+        for (auto alien : alienVec)
+        {
+            if (alien->getState() != Actor::ActorState::Active)
+            {
+                alien = nullptr;
+                break;
+            }
+        }
+    }
+    */
 
     // Delete dead actors
     vector<Actor*> deadActors;
