@@ -10,8 +10,7 @@ Ship::Ship() :
 {
 	SpriteComponent* sc = new SpriteComponent(this, Assets::getTexture("Ship"));
 	InputComponent* ic = new InputComponent(this);
-	//ic->setMaxForwardSpeed(300.0f);
-	//ic->setMaxAngularSpeed(Maths::twoPi);
+
 	ic->setMaxSideSpeed(300.0f);
 
 	collision = new CircleCollisionComponent(this);
@@ -27,11 +26,5 @@ void Ship::actorInput(const Uint8* keyState)
 		laser = new Laser();
 		laser->setPosition(getPosition());
 		laser->setRotation(getRotation());
-		//laserCooldown = 0.9f;
 	}
-}
-
-void Ship::updateActor(float dt)
-{
-	//laserCooldown -= dt;
 }

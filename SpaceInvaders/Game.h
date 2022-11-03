@@ -6,6 +6,7 @@
 #include "SpriteComponent.h"
 #include "Alien.h"
 #include "Ship.h"
+#include "UFO.h"
 
 using std::vector;
 
@@ -46,6 +47,7 @@ public:
 	vector<vector<Alien*>> getAliens() { return aliens; }
 	void removeAlien(Alien* alienTarget);
 	Ship* getShipActive() { return shipActive; }
+	UFO* getSaucer() { return saucer; }
 	void shipDestroy();
 
 private:
@@ -64,13 +66,20 @@ private:
 	// Game specific
 	void aliensShot(float dt);
 	void aliensMovement();
+	void alienLoad();
+	void alienReLoad();
+	void ufoPassage(float dt);
 
 	vector<vector<Alien*>> aliens;
 	vector<Alien*> aliensShooters;
 	int nbAliens = 5 * 11;
+	int lifeCount = 3;
+	int ufoTimer = -1;
 	float delayShot = 0.0f;
+	bool scrolldown = false;
 	Alien* alienLeft = nullptr;
 	Alien* alienRight = nullptr;
 	Ship* shipActive = nullptr;
+	UFO* saucer = nullptr;
 };
 

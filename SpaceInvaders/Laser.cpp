@@ -47,5 +47,13 @@ void Laser::updateActor(float dt)
 				}
 			}
 		}
+		if (getGame().getSaucer() != nullptr && getGame().getSaucer()->getState() == Actor::ActorState::Active)
+		{
+			if (Intersect(*collision, getGame().getSaucer()->getCollision()))
+			{
+				setState(ActorState::Dead);
+				getGame().getSaucer()->setState(ActorState::Dead);
+			}
+		}
 	}
 }

@@ -15,18 +15,14 @@ bool Game::initialize()
 void Game::load()
 {
     // Load textures
-    Assets::loadTexture(renderer, "Res\\Ship01.png", "Ship01");
-    Assets::loadTexture(renderer, "Res\\Ship02.png", "Ship02");
-    Assets::loadTexture(renderer, "Res\\Ship03.png", "Ship03");
-    Assets::loadTexture(renderer, "Res\\Ship04.png", "Ship04");
     Assets::loadTexture(renderer, "Res\\Farback01.png", "Farback01");
     Assets::loadTexture(renderer, "Res\\Farback02.png", "Farback02");
     Assets::loadTexture(renderer, "Res\\Stars.png", "Stars");
-    Assets::loadTexture(renderer, "Res\\Astroid.png", "Astroid");
     Assets::loadTexture(renderer, "Res\\Ship01-SpaceInvaders.png", "Ship");
     Assets::loadTexture(renderer, "Res\\Laser.png", "Laser");
     Assets::loadTexture(renderer, "Res\\Alien_Laser.png", "LaserAlien");
     Assets::loadTexture(renderer, "Res\\Alien.png", "Alien");
+    Assets::loadTexture(renderer, "Res\\UFO.png", "UFO");
 
     // Single sprite
     /*
@@ -50,7 +46,6 @@ void Game::load()
 
     // Controlled ship
     shipActive = new Ship();
-    //ipActive->setPosition(Vector2{ 512, 700 });
 
     // Background
     // Create the "far back" background
@@ -71,25 +66,10 @@ void Game::load()
     BackgroundSpriteComponent* bgSpritesClose = new BackgroundSpriteComponent(bgClose, bgTexsClose, 50);
     //bgSpritesClose->setScrollSpeed(-200.0f);
 
+    srand(time(NULL));
+
     // ALIEN TAB
-    float initY = 100;
-    for (int li = 0; li < 5; li++)
-    {
-        float initX = 192;
-        vector<Alien*> vectorTempAlien;
-        for (int co = 0; co < 11; co++)
-        {
-            Alien* tempAlien = new Alien();
-            tempAlien->setPosition({ initX, initY });
-            vectorTempAlien.emplace_back(tempAlien);
-            initX += 64;
-        }
-        aliens.emplace_back(vectorTempAlien);
-        initY += 48;
-    }
-    alienLeft = aliens[4][0];
-    alienRight = aliens[4][10];
-    aliensShooters = aliens[4];
+    alienLoad();
 }
 
 void Game::loop()
@@ -158,46 +138,43 @@ void Game::removeActor(Actor* actor)
 
 void Game::removeAlien(Alien* alienTarget)
 {
+    bool finish = false;
     nbAliens--;
-    
-    
+
     for (int i = 0; i < 5; i++)
     {
         for (int j = 0; j < 11; j++)
         {
-            if (aliensShooters[j] == alienTarget)
-            {
-                int line = i - 1;
-                for (;line >= 0; line--)
-                {
-                    if (aliens[line][j] != nullptr)
-                    {
-                        break;
-                    }
-                }
-
-                if (line == -1)
-                {
-                    /*
-                    auto iter = std::find(begin(aliensShooters), end(aliensShooters), alienTarget);
-                    if (iter != aliensShooters.end())
-                    {
-                        aliensShooters.erase(iter);
-                    }
-                    */
-                    //aliensShooters.erase(aliensShooters.begin()+j-1);
-                    aliensShooters[j] = nullptr;
-                }
-                else
-                {
-                    aliensShooters[j] = aliens[line][j];
-                }
-            }
             if (aliens[i][j] == alienTarget)
             {
                 aliens[i][j] = nullptr;
+                finish = true;
                 break;
             }
+        }
+        if (finish)
+        {
+            finish = false;
+            break;
+        }
+    }
+
+    for (int j = 0; j < 11; j++)
+    {
+        if (aliensShooters[j] == alienTarget)
+        {
+            aliensShooters[j] = nullptr;
+
+            for (int line = 4; line >= 0; line--)
+            {
+                if (aliens[line][j] != nullptr)
+                {
+                    aliensShooters[j] = aliens[line][j];
+                    break;
+                }
+            }
+            if (aliensShooters[j] != nullptr)
+                break;
         }
     }
 
@@ -247,6 +224,12 @@ void Game::removeAlien(Alien* alienTarget)
 
 void Game::shipDestroy()
 {
+    
+    lifeCount--;
+    if (lifeCount <= 0)
+    {
+        alienReLoad();
+    }
     shipActive = new Ship();
 }
 
@@ -293,6 +276,8 @@ void Game::update(float dt)
     aliensShot(dt);
     aliensMovement();
 
+    ufoPassage(dt);
+
     // Move pending actors to actors
     for (auto pendingActor : pendingActors)
     {
@@ -313,6 +298,9 @@ void Game::update(float dt)
     {
         delete deadActor;
     }
+
+    if(nbAliens <= 0)
+        alienReLoad();
 }
 
 void Game::render()
@@ -347,6 +335,7 @@ void Game::aliensMovement()
 
     //std::cout << nbAliens << std::endl;
     //std::cout << aliens[4][0]->getMove().getSideSpeed() << std::endl;
+
     switch (nbAliens)
     {
     case 27:
@@ -389,18 +378,113 @@ void Game::aliensMovement()
         break;
     }
 
-    if ((alienLeft->getPosition().x <= 55) || (alienRight->getPosition().x >= WINDOW_WIDTH - 55))
+    if ( !scrolldown && ((alienLeft->getPosition().x <= 55) || (alienRight->getPosition().x >= WINDOW_WIDTH - 55)))
     {
-        for (int i = 0; i < 5; i++)
+        for (auto& alienVec : aliens)
         {
-            for (int j = 0; j < 11; j++)
+            for (auto alien : alienVec)
             {
-                if (aliens[i][j] != nullptr)
+                if (alien != nullptr)
                 {
-                    aliens[i][j]->setPosition({ aliens[i][j]->getPosition().x, aliens[i][j]->getPosition().y + 24 });
-                    aliens[i][j]->getMove().setSideSpeed(aliens[i][j]->getMove().getSideSpeed() * -1);
+                    //alien->getMove().setSideSpeed(0);
+                    alien->setPosition({ alien->getPosition().x, alien->getPosition().y + 24 });
+                    alien->getMove().setSideSpeed(alien->getMove().getSideSpeed() * -1);
                 }
             }
         }
+        scrolldown = true;
+    }
+
+    if (scrolldown && ((alienLeft->getPosition().x > 55) || (alienRight->getPosition().x < WINDOW_WIDTH - 55)))
+        scrolldown = false;
+
+}
+
+void Game::alienLoad()
+{
+    float initY = 100;
+    for (int li = 0; li < 5; li++)
+    {
+        float initX = 192;
+        vector<Alien*> vectorTempAlien;
+        for (int co = 0; co < 11; co++)
+        {
+            Alien* tempAlien = new Alien();
+            tempAlien->setPosition({ initX, initY });
+            vectorTempAlien.emplace_back(tempAlien);
+            initX += 64;
+        }
+        aliens.emplace_back(vectorTempAlien);
+        initY += 48;
+    }
+    alienLeft = aliens[4][0];
+    alienRight = aliens[4][10];
+    aliensShooters = aliens[4];
+}
+
+void Game::alienReLoad()
+{
+    float initY = 100;
+    for (int li = 0; li < 5; li++)
+    {
+        float initX = 192;
+        for (int co = 0; co < 11; co++)
+        {
+            if (aliens[li][co] == nullptr)
+            {
+                aliens[li][co] = new Alien();
+            }
+            aliens[li][co]->setPosition({ initX, initY });
+            aliens[li][co]->getMove().setSideSpeed(-25);
+            initX += 64;
+        }
+        initY += 48;
+    }
+    alienLeft = aliens[4][0];
+    alienRight = aliens[4][10];
+    aliensShooters = aliens[4];
+    lifeCount = 3;
+    nbAliens = 55;
+}
+
+void Game::ufoPassage(float dt)
+{
+    if (ufoTimer <= 0)
+    {
+        if (saucer == nullptr)
+        {
+            saucer = new UFO();
+            int direction = rand() % 2;
+            switch (direction)
+            {
+            case 0:
+                saucer->setPosition({ 56, 50 });
+                saucer->getMove().setSideSpeed(300.0f);
+                break;
+            case 1:
+                saucer->setPosition({ WINDOW_WIDTH - 56, 50 });
+                saucer->getMove().setSideSpeed(-300.0f);
+                break;
+            default:
+                break;
+            }
+
+            ufoTimer = rand() % 2500;
+        }
+        else
+        {
+            saucer->setState(Actor::ActorState::Dead);
+            saucer = nullptr;
+        }
+    }
+    else
+    {
+        ufoTimer -= dt;
+    }
+
+    if(saucer != nullptr && (saucer->getPosition().x <= 55 || saucer->getPosition().x >= WINDOW_WIDTH - 55))
+    {
+        saucer->setState(Actor::ActorState::Dead);
+        saucer = nullptr;
     }
 }

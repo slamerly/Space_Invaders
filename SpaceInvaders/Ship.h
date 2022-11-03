@@ -11,7 +11,6 @@ public:
     Ship();
 
     void actorInput(const Uint8* keyState) override;
-    void updateActor(float dt) override;
 
     CircleCollisionComponent& getCollision() { return *collision; }
 

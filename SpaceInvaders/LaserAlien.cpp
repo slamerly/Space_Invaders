@@ -8,7 +8,7 @@
 
 LaserAlien::LaserAlien() :
 	Actor(),
-	deathTimer(1.2f),
+	deathTimer(2.0f),
 	collision(nullptr)
 {
 	MoveComponent* mc = new MoveComponent(this);
@@ -31,11 +31,14 @@ void LaserAlien::updateActor(float dt)
 	{
 		Ship* ship;
 		ship = getGame().getShipActive();
-		if (Intersect(*collision, ship->getCollision()))
+		if (ship != nullptr)
 		{
-			setState(ActorState::Dead);
-			ship->setState(ActorState::Dead);
-			getGame().shipDestroy();
+			if (Intersect(*collision, ship->getCollision()))
+			{
+				setState(ActorState::Dead);
+				ship->setState(ActorState::Dead);
+				getGame().shipDestroy();
+			}
 		}
 	}
 }

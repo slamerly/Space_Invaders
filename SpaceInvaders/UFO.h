@@ -3,16 +3,15 @@
 #include "CircleCollisionComponent.h"
 #include "MoveComponent.h"
 
-class Alien :
+class UFO :
     public Actor
 {
 public:
-    Alien();
-    ~Alien();
+    UFO();
+    ~UFO();
 
     CircleCollisionComponent& getCollision() { return *collision; }
     MoveComponent& getMove() { return *move; }
-    void Shot();
 
 private:
     CircleCollisionComponent* collision;
