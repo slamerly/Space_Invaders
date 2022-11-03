@@ -1,21 +1,20 @@
 #pragma once
 #include "Actor.h"
-#include "Laser.h"
 #include "CircleCollisionComponent.h"
-#include <SDL_stdinc.h>
+#include "MoveComponent.h"
 
-class Ship :
+class Shield :
     public Actor
 {
 public:
-    Ship();
-
-    void actorInput(const Uint8* keyState) override;
+    Shield();
+    ~Shield();
 
     CircleCollisionComponent& getCollision() { return *collision; }
+    int getLife() { return life; }
+    void setLife(int lifeP);
 
 private:
-    Laser* laser = nullptr;
     CircleCollisionComponent* collision;
+    int life = 10;
 };
-

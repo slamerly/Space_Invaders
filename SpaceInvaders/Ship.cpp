@@ -14,7 +14,7 @@ Ship::Ship() :
 	ic->setMaxSideSpeed(300.0f);
 
 	collision = new CircleCollisionComponent(this);
-	collision->setRadius(40.0f);
+	collision->setRadius(30.0f);
 
 	setPosition(Vector2{ 512, 700 });
 }

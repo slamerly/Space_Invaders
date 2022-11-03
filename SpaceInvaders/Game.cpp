@@ -23,6 +23,7 @@ void Game::load()
     Assets::loadTexture(renderer, "Res\\Alien_Laser.png", "LaserAlien");
     Assets::loadTexture(renderer, "Res\\Alien.png", "Alien");
     Assets::loadTexture(renderer, "Res\\UFO.png", "UFO");
+    Assets::loadTexture(renderer, "Res\\Shield.png", "Shield");
 
     // Single sprite
     /*
@@ -136,103 +137,6 @@ void Game::removeActor(Actor* actor)
     }
 }
 
-void Game::removeAlien(Alien* alienTarget)
-{
-    bool finish = false;
-    nbAliens--;
-
-    for (int i = 0; i < 5; i++)
-    {
-        for (int j = 0; j < 11; j++)
-        {
-            if (aliens[i][j] == alienTarget)
-            {
-                aliens[i][j] = nullptr;
-                finish = true;
-                break;
-            }
-        }
-        if (finish)
-        {
-            finish = false;
-            break;
-        }
-    }
-
-    for (int j = 0; j < 11; j++)
-    {
-        if (aliensShooters[j] == alienTarget)
-        {
-            aliensShooters[j] = nullptr;
-
-            for (int line = 4; line >= 0; line--)
-            {
-                if (aliens[line][j] != nullptr)
-                {
-                    aliensShooters[j] = aliens[line][j];
-                    break;
-                }
-            }
-            if (aliensShooters[j] != nullptr)
-                break;
-        }
-    }
-
-    if (alienTarget == alienLeft)
-    {
-        int li = 0;
-        for (int co = 0; co < 11; co++)
-        {
-            for (li = 4; li >= 0; li--)
-            {
-                //std::cout << "test :" << li << ", " << co << std::endl;
-                if (aliens[li][co] != nullptr)
-                {
-                    alienLeft = aliens[li][co];
-                    //std::cout << li << ", " << co << std::endl;
-                    break;
-                }
-            }
-            if (alienLeft != alienTarget)
-                break;
-            else
-                li = 4;
-        }
-    }
-
-    if (alienTarget == alienRight)
-    {
-        int li = 4;
-        for (int co = 10; co >= 0; co--)
-        {
-            for (li = 4; li >= 0; li--)
-            {
-                if (aliens[li][co] != nullptr)
-                {
-                    alienRight = aliens[li][co];
-                    break;
-                }
-            }
-            if (alienRight != alienTarget)
-                break;
-            else
-                li = 4;
-        }
-
-    }
-}
-
-void Game::shipDestroy()
-{
-    
-    lifeCount--;
-    if (lifeCount <= 0)
-    {
-        alienReLoad();
-    }
-    shipActive = new Ship();
-}
-
 void Game::processInput()
 {
     SDL_Event event;
@@ -299,8 +203,11 @@ void Game::update(float dt)
         delete deadActor;
     }
 
-    if(nbAliens <= 0)
+    if (nbAliens <= 0 || shieldTouched)
+    {
         alienReLoad();
+        shieldTouched = false;
+    }
 }
 
 void Game::render()
@@ -308,6 +215,116 @@ void Game::render()
     renderer.beginDraw();
     renderer.draw();
     renderer.endDraw();
+}
+
+void Game::removeAlien(Alien* alienTarget)
+{
+    bool finish = false;
+    nbAliens--;
+
+    // Remove alientTarget
+    for (int i = 0; i < 5; i++)
+    {
+        for (int j = 0; j < 11; j++)
+        {
+            if (aliens[i][j] == alienTarget)
+            {
+                aliens[i][j] = nullptr;
+                finish = true;
+                break;
+            }
+        }
+        if (finish)
+        {
+            finish = false;
+            break;
+        }
+    }
+
+    // If alientTarget is a Shooter, then replace the shooter
+    for (int j = 0; j < 11; j++)
+    {
+        if (aliensShooters[j] == alienTarget)
+        {
+            aliensShooters[j] = nullptr;
+
+            for (int line = 4; line >= 0; line--)
+            {
+                if (aliens[line][j] != nullptr)
+                {
+                    aliensShooters[j] = aliens[line][j];
+                    break;
+                }
+            }
+            if (aliensShooters[j] != nullptr)
+                break;
+        }
+    }
+
+    // If alientTarget is the leftmosht, the replace it
+    if (alienTarget == alienLeft)
+    {
+        int li = 0;
+        for (int co = 0; co < 11; co++)
+        {
+            for (li = 4; li >= 0; li--)
+            {
+                //std::cout << "test :" << li << ", " << co << std::endl;
+                if (aliens[li][co] != nullptr)
+                {
+                    alienLeft = aliens[li][co];
+                    //std::cout << li << ", " << co << std::endl;
+                    break;
+                }
+            }
+            if (alienLeft != alienTarget)
+                break;
+            else
+                li = 4;
+        }
+    }
+
+    // If alientTarget is the rightmosht, the replace it
+    if (alienTarget == alienRight)
+    {
+        int li = 4;
+        for (int co = 10; co >= 0; co--)
+        {
+            for (li = 4; li >= 0; li--)
+            {
+                if (aliens[li][co] != nullptr)
+                {
+                    alienRight = aliens[li][co];
+                    break;
+                }
+            }
+            if (alienRight != alienTarget)
+                break;
+            else
+                li = 4;
+        }
+
+    }
+}
+
+void Game::removeShield(Shield* shieldTarget)
+{
+    for (int i = 0; i < shields.size(); i++)
+    {
+        if (shields[i] == shieldTarget)
+            shields[i] = nullptr;
+    }
+}
+
+void Game::shipDestroy()
+{
+
+    lifeCount--;
+    if (lifeCount <= 0)
+    {
+        alienReLoad();
+    }
+    shipActive = new Ship();
 }
 
 void Game::aliensShot(float dt)
@@ -336,6 +353,7 @@ void Game::aliensMovement()
     //std::cout << nbAliens << std::endl;
     //std::cout << aliens[4][0]->getMove().getSideSpeed() << std::endl;
 
+    // Acceleration with the number of Aliens alive
     switch (nbAliens)
     {
     case 27:
@@ -378,6 +396,7 @@ void Game::aliensMovement()
         break;
     }
 
+    // Scroll down aliens
     if ( !scrolldown && ((alienLeft->getPosition().x <= 55) || (alienRight->getPosition().x >= WINDOW_WIDTH - 55)))
     {
         for (auto& alienVec : aliens)
@@ -386,9 +405,14 @@ void Game::aliensMovement()
             {
                 if (alien != nullptr)
                 {
-                    //alien->getMove().setSideSpeed(0);
                     alien->setPosition({ alien->getPosition().x, alien->getPosition().y + 24 });
                     alien->getMove().setSideSpeed(alien->getMove().getSideSpeed() * -1);
+
+                    // End game
+                    if(alien->getPosition().y >= 575)
+                    {
+                        shieldTouched = true;
+                    }
                 }
             }
         }
@@ -403,9 +427,10 @@ void Game::aliensMovement()
 void Game::alienLoad()
 {
     float initY = 100;
+    float initX = 192;
     for (int li = 0; li < 5; li++)
     {
-        float initX = 192;
+        initX = 192;
         vector<Alien*> vectorTempAlien;
         for (int co = 0; co < 11; co++)
         {
@@ -420,14 +445,23 @@ void Game::alienLoad()
     alienLeft = aliens[4][0];
     alienRight = aliens[4][10];
     aliensShooters = aliens[4];
+
+    initX = 234;
+    for (int i = 0; i < 4; i++)
+    {
+        shields.emplace_back(new Shield());
+        shields[i]->setPosition({ initX, 625 });
+        initX += 184;
+    }
 }
 
 void Game::alienReLoad()
 {
     float initY = 100;
+    float initX = 192;
     for (int li = 0; li < 5; li++)
     {
-        float initX = 192;
+        initX = 192;
         for (int co = 0; co < 11; co++)
         {
             if (aliens[li][co] == nullptr)
@@ -445,6 +479,18 @@ void Game::alienReLoad()
     aliensShooters = aliens[4];
     lifeCount = 3;
     nbAliens = 55;
+
+    initX = 234;
+    for (int i = 0; i < 4; i++)
+    {
+        if (shields[i] == nullptr)
+        {
+            shields[i] = new Shield();
+            shields[i]->setPosition({ initX, 625 });
+        }
+        shields[i]->setLife(10);
+        initX += 184;
+    }
 }
 
 void Game::ufoPassage(float dt)
@@ -469,7 +515,7 @@ void Game::ufoPassage(float dt)
                 break;
             }
 
-            ufoTimer = rand() % 2500;
+            ufoTimer = rand() % (2500 + 1) + 500;
         }
         else
         {

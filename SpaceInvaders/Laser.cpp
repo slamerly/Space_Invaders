@@ -4,7 +4,7 @@
 #include "MoveComponent.h"
 #include "Game.h"
 #include "Alien.h"
-#include "Ship.h"
+#include "Shield.h"
 
 Laser::Laser() :
 	Actor(),
@@ -47,12 +47,33 @@ void Laser::updateActor(float dt)
 				}
 			}
 		}
+
 		if (getGame().getSaucer() != nullptr && getGame().getSaucer()->getState() == Actor::ActorState::Active)
 		{
 			if (Intersect(*collision, getGame().getSaucer()->getCollision()))
 			{
 				setState(ActorState::Dead);
 				getGame().getSaucer()->setState(ActorState::Dead);
+			}
+		}
+
+		vector<Shield*> shields;
+		shields = getGame().getShields();
+
+		for (auto shield : shields)
+		{
+			if (shield != nullptr && shield->getState() == Actor::ActorState::Active)
+			{
+				if (Intersect(*collision, shield->getCollision()))
+				{
+					shield->setLife(shield->getLife() - 1);
+					setState(ActorState::Dead);
+					if (shield->getLife() <= 0)
+					{
+						shield->setState(ActorState::Dead);
+					}
+					break;
+				}
 			}
 		}
 	}

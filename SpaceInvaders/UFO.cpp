@@ -13,7 +13,3 @@ UFO::UFO() :
 
 	move = new MoveComponent(this);
 }
-
-UFO::~UFO()
-{
-}

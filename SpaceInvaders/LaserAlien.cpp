@@ -3,8 +3,8 @@
 #include "Assets.h"
 #include "MoveComponent.h"
 #include "Game.h"
-#include "Alien.h"
 #include "Ship.h"
+#include "Shield.h"
 
 LaserAlien::LaserAlien() :
 	Actor(),
@@ -38,6 +38,25 @@ void LaserAlien::updateActor(float dt)
 				setState(ActorState::Dead);
 				ship->setState(ActorState::Dead);
 				getGame().shipDestroy();
+			}
+		}
+	}
+	vector<Shield*> shields;
+	shields = getGame().getShields();
+
+	for (auto shield : shields)
+	{
+		if (shield != nullptr && shield->getState() == Actor::ActorState::Active)
+		{
+			if (Intersect(*collision, shield->getCollision()))
+			{
+				setState(ActorState::Dead);
+				shield->setLife(shield->getLife() - 1);
+				if (shield->getLife() <= 0)
+				{
+					shield->setState(ActorState::Dead);
+				}
+				break;
 			}
 		}
 	}

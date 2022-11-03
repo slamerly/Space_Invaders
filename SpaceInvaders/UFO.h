@@ -8,7 +8,6 @@ class UFO :
 {
 public:
     UFO();
-    ~UFO();
 
     CircleCollisionComponent& getCollision() { return *collision; }
     MoveComponent& getMove() { return *move; }

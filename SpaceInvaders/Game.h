@@ -7,6 +7,7 @@
 #include "Alien.h"
 #include "Ship.h"
 #include "UFO.h"
+#include "Shield.h"
 
 using std::vector;
 
@@ -45,7 +46,9 @@ public:
 
 	// Game specific
 	vector<vector<Alien*>> getAliens() { return aliens; }
+	vector<Shield*> getShields() { return shields; }
 	void removeAlien(Alien* alienTarget);
+	void removeShield(Shield* shieldTarget);
 	Ship* getShipActive() { return shipActive; }
 	UFO* getSaucer() { return saucer; }
 	void shipDestroy();
@@ -72,11 +75,13 @@ private:
 
 	vector<vector<Alien*>> aliens;
 	vector<Alien*> aliensShooters;
+	vector<Shield*> shields;
 	int nbAliens = 5 * 11;
 	int lifeCount = 3;
 	int ufoTimer = -1;
 	float delayShot = 0.0f;
 	bool scrolldown = false;
+	bool shieldTouched = false;
 	Alien* alienLeft = nullptr;
 	Alien* alienRight = nullptr;
 	Ship* shipActive = nullptr;
