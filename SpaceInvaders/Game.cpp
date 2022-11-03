@@ -104,6 +104,8 @@ void Game::load()
         aliens.emplace_back(vectorTempAlien);
         initY += 48;
     }
+    alienLeft = aliens[4][0];
+    alienRight = aliens[4][10];
     aliensShooters = aliens[4];
     /*
     Alien* alienTemp = new Alien();
@@ -197,19 +199,8 @@ void Game::removeAstroid(Astroid* astroid)
 
 void Game::removeAlien(Alien* alienTarget)
 {
-    /*
-    for (auto alienVec : aliens)
-    {
-        for (auto alien : alienVec)
-        {
-            if (alien == alienTarget)
-            {
-                alien = nullptr;
-                break;
-            }
-        }
-    }
-    */
+    nbAliens--;
+    
     
     for (int i = 0; i < 5; i++)
     {
@@ -250,17 +241,49 @@ void Game::removeAlien(Alien* alienTarget)
             }
         }
     }
-    /*
-    for (auto alienVec : aliens)
+
+    if (alienTarget == alienLeft)
     {
-        auto iter = std::find(begin(alienVec), end(alienVec), alienTarget);
-        if (iter != alienVec.end())
+        int li = 0;
+        for (int co = 0; co < 11; co++)
         {
-            alienVec.erase(iter);
-            break;
+            for (li = 4; li >= 0; li--)
+            {
+                //std::cout << "test :" << li << ", " << co << std::endl;
+                if (aliens[li][co] != nullptr)
+                {
+                    alienLeft = aliens[li][co];
+                    //std::cout << li << ", " << co << std::endl;
+                    break;
+                }
+            }
+            if (alienLeft != alienTarget)
+                break;
+            else
+                li = 4;
         }
     }
-    */
+
+    if (alienTarget == alienRight)
+    {
+        int li = 4;
+        for (int co = 10; co >= 0; co--)
+        {
+            for (li = 4; li >= 0; li--)
+            {
+                if (aliens[li][co] != nullptr)
+                {
+                    alienRight = aliens[li][co];
+                    break;
+                }
+            }
+            if (alienRight != alienTarget)
+                break;
+            else
+                li = 4;
+        }
+
+    }
 }
 
 void Game::processInput()
@@ -304,6 +327,7 @@ void Game::update(float dt)
     isUpdatingActors = false;
 
     //aliensShoot(dt);
+    aliensMovement(dt);
 
     // Move pending actors to actors
     for (auto pendingActor : pendingActors)
@@ -350,5 +374,69 @@ void Game::aliensShoot(float dt)
     else
     {
         delayShot -= dt;
+    }
+}
+
+void Game::aliensMovement(float dt)
+{
+    //std::cout << alienLeft->getPosition().x << ", " << alienLeft->getPosition().y << std::endl;
+
+    //std::cout << nbAliens << std::endl;
+    //std::cout << aliens[4][0]->getMove().getSideSpeed() << std::endl;
+    switch (nbAliens)
+    {
+    case 27:
+        for (auto alienVec : aliens)
+        {
+            for (auto alien : alienVec)
+            {
+                if (alien != nullptr && (alien->getMove().getSideSpeed() == 25 || alien->getMove().getSideSpeed() == -25))
+                {
+                    alien->getMove().setSideSpeed(alien->getMove().getSideSpeed() * 2);
+                }
+            }
+        }
+        break;
+    case 13:
+        for (auto alienVec : aliens)
+        {
+            for (auto alien : alienVec)
+            {
+                if (alien != nullptr && (alien->getMove().getSideSpeed() == 50 || alien->getMove().getSideSpeed() == -50))
+                {
+                    alien->getMove().setSideSpeed(alien->getMove().getSideSpeed() * 2);
+                }
+            }
+        }
+        break;
+    case 6:
+        for (auto alienVec : aliens)
+        {
+            for (auto alien : alienVec)
+            {
+                if (alien != nullptr && (alien->getMove().getSideSpeed() == 100 || alien->getMove().getSideSpeed() == -100))
+                {
+                    alien->getMove().setSideSpeed(alien->getMove().getSideSpeed() * 2);
+                }
+            }
+        }
+        break;
+    default:
+        break;
+    }
+
+    if ((alienLeft->getPosition().x <= 55) || (alienRight->getPosition().x >= WINDOW_WIDTH - 55))
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 11; j++)
+            {
+                if (aliens[i][j] != nullptr)
+                {
+                    aliens[i][j]->setPosition({ aliens[i][j]->getPosition().x, aliens[i][j]->getPosition().y + 24 });
+                    aliens[i][j]->getMove().setSideSpeed(aliens[i][j]->getMove().getSideSpeed() * -1);
+                }
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "Actor.h"
 #include "CircleCollisionComponent.h"
+#include "MoveComponent.h"
 
 class Alien :
     public Actor
@@ -10,9 +11,11 @@ public:
     ~Alien();
 
     CircleCollisionComponent& getCollision() { return *collision; }
+    MoveComponent& getMove() { return *move; }
     void Shoot();
 
 private:
     CircleCollisionComponent* collision;
+    MoveComponent* move;
 };
 

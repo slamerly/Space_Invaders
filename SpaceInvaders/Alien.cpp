@@ -11,6 +11,9 @@ Alien::Alien() :
 
 	collision = new CircleCollisionComponent(this);
 	collision->setRadius(10.0f);
+
+	move = new MoveComponent(this);
+	move->setSideSpeed(-25.0f);
 }
 
 Alien::~Alien()

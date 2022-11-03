@@ -65,11 +65,16 @@ private:
 
 	// Game specific
 	void aliensShoot(float dt);
+	void aliensMovement(float dt);
 
 	vector<Astroid*> astroids;
 	vector<vector<Alien*>> aliens;
 	vector<Alien*> aliensShooters;
+	int nbAliens = 5 * 11;
 	float delayShot = 0.0f;
+	Alien* alienLeft = nullptr;
+	Alien* alienRight = nullptr;
+	bool ok = false;
 	//Alien* alien;
 };
 
