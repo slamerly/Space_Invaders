@@ -12,7 +12,7 @@ public:
 
     CircleCollisionComponent& getCollision() { return *collision; }
     MoveComponent& getMove() { return *move; }
-    void Shoot();
+    void Shot();
 
 private:
     CircleCollisionComponent* collision;

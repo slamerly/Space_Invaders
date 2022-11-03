@@ -4,8 +4,8 @@
 #include "Renderer.h"
 #include "Actor.h"
 #include "SpriteComponent.h"
-#include "Astroid.h"
 #include "Alien.h"
+#include "Ship.h"
 
 using std::vector;
 
@@ -43,12 +43,10 @@ public:
 	Renderer& getRenderer() { return renderer; }
 
 	// Game specific
-	vector<Astroid*>& getAstroids();
-	void addAstroid(Astroid* astroid);
-	void removeAstroid(Astroid* astroid);
 	vector<vector<Alien*>> getAliens() { return aliens; }
-	//Alien* getAlien() { return alien; }
 	void removeAlien(Alien* alienTarget);
+	Ship* getShipActive() { return shipActive; }
+	void shipDestroy();
 
 private:
 	void processInput();
@@ -64,17 +62,15 @@ private:
 	vector<Actor*> pendingActors;
 
 	// Game specific
-	void aliensShoot(float dt);
-	void aliensMovement(float dt);
+	void aliensShot(float dt);
+	void aliensMovement();
 
-	vector<Astroid*> astroids;
 	vector<vector<Alien*>> aliens;
 	vector<Alien*> aliensShooters;
 	int nbAliens = 5 * 11;
 	float delayShot = 0.0f;
 	Alien* alienLeft = nullptr;
 	Alien* alienRight = nullptr;
-	bool ok = false;
-	//Alien* alien;
+	Ship* shipActive = nullptr;
 };
 

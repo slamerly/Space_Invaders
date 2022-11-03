@@ -13,11 +13,11 @@ public:
     void actorInput(const Uint8* keyState) override;
     void updateActor(float dt) override;
 
-    //CircleCollisionComponent& getCollision() { return *collision; }
+    CircleCollisionComponent& getCollision() { return *collision; }
 
 private:
     //float laserCooldown;
     Laser* laser = nullptr;
-    //CircleCollisionComponent* collision;
+    CircleCollisionComponent* collision;
 };
 

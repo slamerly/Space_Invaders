@@ -3,7 +3,7 @@
 #include "Assets.h"
 #include "InputComponent.h"
 #include "Maths.h"
-#include <iostream>
+#include "Game.h"
 
 Ship::Ship() : 
 	Actor()
@@ -14,8 +14,10 @@ Ship::Ship() :
 	//ic->setMaxAngularSpeed(Maths::twoPi);
 	ic->setMaxSideSpeed(300.0f);
 
-	//collision = new CircleCollisionComponent(this);
-	//collision->setRadius(40.0f);
+	collision = new CircleCollisionComponent(this);
+	collision->setRadius(40.0f);
+
+	setPosition(Vector2{ 512, 700 });
 }
 
 void Ship::actorInput(const Uint8* keyState)

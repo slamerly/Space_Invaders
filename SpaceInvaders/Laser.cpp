@@ -3,17 +3,19 @@
 #include "Assets.h"
 #include "MoveComponent.h"
 #include "Game.h"
-#include "Astroid.h"
 #include "Alien.h"
+#include "Ship.h"
 
 Laser::Laser() :
 	Actor(),
 	deathTimer(0.85f),
 	collision(nullptr)
-{
-	new SpriteComponent(this, Assets::getTexture("Laser"));
+{	
 	MoveComponent* mc = new MoveComponent(this);
+
+	new SpriteComponent(this, Assets::getTexture("Laser"));
 	mc->setForwardSpeed(800.0f);
+
 	collision = new CircleCollisionComponent(this);
 	collision->setRadius(11.0f);
 }
@@ -27,21 +29,10 @@ void Laser::updateActor(float dt)
 	}
 	else
 	{
-		/*
-		auto astroids = getGame().getAstroids();
-		for (auto astroid : astroids)
-		{
-			if (Intersect(*collision, astroid->getCollision()))
-			{
-				setState(ActorState::Dead);
-				astroid->setState(ActorState::Dead);
-				break;
-			}
-		}
-		*/
-		vector<vector<Alien*>> aliens; 
+		vector<vector<Alien*>> aliens;
 		aliens = getGame().getAliens();
-		for (auto alienVec : aliens)
+
+		for (auto &alienVec : aliens)
 		{
 			for (auto alien : alienVec)
 			{

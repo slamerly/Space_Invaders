@@ -3,8 +3,6 @@
 #include "Assets.h"
 #include "AnimSpriteComponent.h"
 #include "BackgroundSpriteComponent.h"
-#include "Astroid.h"
-#include "Ship.h"
 #include <iostream>
 
 bool Game::initialize()
@@ -27,6 +25,7 @@ void Game::load()
     Assets::loadTexture(renderer, "Res\\Astroid.png", "Astroid");
     Assets::loadTexture(renderer, "Res\\Ship01-SpaceInvaders.png", "Ship");
     Assets::loadTexture(renderer, "Res\\Laser.png", "Laser");
+    Assets::loadTexture(renderer, "Res\\Alien_Laser.png", "LaserAlien");
     Assets::loadTexture(renderer, "Res\\Alien.png", "Alien");
 
     // Single sprite
@@ -50,8 +49,8 @@ void Game::load()
     */
 
     // Controlled ship
-    Ship* ship = new Ship();
-    ship->setPosition(Vector2{ 512, 700 });
+    shipActive = new Ship();
+    //ipActive->setPosition(Vector2{ 512, 700 });
 
     // Background
     // Create the "far back" background
@@ -72,15 +71,6 @@ void Game::load()
     BackgroundSpriteComponent* bgSpritesClose = new BackgroundSpriteComponent(bgClose, bgTexsClose, 50);
     //bgSpritesClose->setScrollSpeed(-200.0f);
 
-    /*
-    const int astroidNumber = 20;
-    for (int i = 0; i < astroidNumber; ++i)
-    {
-        new Astroid();
-    }
-    */
-
-
     // ALIEN TAB
     float initY = 100;
     for (int li = 0; li < 5; li++)
@@ -91,15 +81,8 @@ void Game::load()
         {
             Alien* tempAlien = new Alien();
             tempAlien->setPosition({ initX, initY });
-            //aliens[li][co] = new Alien();
-            //aliens[li][co]->setPosition({ initX, initY });
             vectorTempAlien.emplace_back(tempAlien);
             initX += 64;
-            /*if (li == 4)
-            {
-                aliensShooters.emplace_back(tempAlien);
-            }
-            */
         }
         aliens.emplace_back(vectorTempAlien);
         initY += 48;
@@ -107,11 +90,6 @@ void Game::load()
     alienLeft = aliens[4][0];
     alienRight = aliens[4][10];
     aliensShooters = aliens[4];
-    /*
-    Alien* alienTemp = new Alien();
-    alienTemp->setPosition({ 192, 100 });
-    alien = alienTemp;
-    */
 }
 
 void Game::loop()
@@ -175,25 +153,6 @@ void Game::removeActor(Actor* actor)
     {
         std::iter_swap(iter, end(actors) - 1);
         actors.pop_back();
-    }
-}
-
-vector<Astroid*>& Game::getAstroids()
-{
-    return astroids;
-}
-
-void Game::addAstroid(Astroid* astroid)
-{
-    astroids.emplace_back(astroid);
-}
-
-void Game::removeAstroid(Astroid* astroid)
-{
-    auto iter = std::find(begin(astroids), end(astroids), astroid);
-    if (iter != astroids.end())
-    {
-        astroids.erase(iter);
     }
 }
 
@@ -286,6 +245,11 @@ void Game::removeAlien(Alien* alienTarget)
     }
 }
 
+void Game::shipDestroy()
+{
+    shipActive = new Ship();
+}
+
 void Game::processInput()
 {
     SDL_Event event;
@@ -326,8 +290,8 @@ void Game::update(float dt)
     }
     isUpdatingActors = false;
 
-    //aliensShoot(dt);
-    aliensMovement(dt);
+    aliensShot(dt);
+    aliensMovement();
 
     // Move pending actors to actors
     for (auto pendingActor : pendingActors)
@@ -358,18 +322,18 @@ void Game::render()
     renderer.endDraw();
 }
 
-void Game::aliensShoot(float dt)
+void Game::aliensShot(float dt)
 {
     if (delayShot <= 0)
     {
         int shooter = 0;
         do {
-            shooter = rand() % 12;
+            shooter = rand() % 11;
         } while (aliensShooters[shooter] == nullptr);
 
-        aliensShooters[shooter]->Shoot();
+        aliensShooters[shooter]->Shot();
 
-        delayShot = static_cast<float> (rand() % 3 + 1);
+        delayShot = (rand() % 30) * 0.1f;
     }
     else
     {
@@ -377,7 +341,7 @@ void Game::aliensShoot(float dt)
     }
 }
 
-void Game::aliensMovement(float dt)
+void Game::aliensMovement()
 {
     //std::cout << alienLeft->getPosition().x << ", " << alienLeft->getPosition().y << std::endl;
 
@@ -386,7 +350,7 @@ void Game::aliensMovement(float dt)
     switch (nbAliens)
     {
     case 27:
-        for (auto alienVec : aliens)
+        for (auto &alienVec : aliens)
         {
             for (auto alien : alienVec)
             {
@@ -398,7 +362,7 @@ void Game::aliensMovement(float dt)
         }
         break;
     case 13:
-        for (auto alienVec : aliens)
+        for (auto &alienVec : aliens)
         {
             for (auto alien : alienVec)
             {
@@ -410,7 +374,7 @@ void Game::aliensMovement(float dt)
         }
         break;
     case 6:
-        for (auto alienVec : aliens)
+        for (auto &alienVec : aliens)
         {
             for (auto alien : alienVec)
             {
